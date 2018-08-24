@@ -1,24 +1,43 @@
 package pricing.web
 
+import mu.KLogging
+import pricing.service.RateService
 import java.time.Instant
-import javax.ws.rs.*
+import java.time.ZonedDateTime
+import javax.annotation.ManagedBean
+import javax.inject.Inject
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Response
 
 @Path("rates")
 @Produces("application/json", "application/xml")
-class RateResource {
+@ManagedBean
+class RateResource @Inject constructor(private val rateService: RateService) {
+    companion object : KLogging()
+
     @GET
     fun getPrice(
         // TODO Could we take advantage of bean validation here?
         // Can we map these two values to a single bean and then use validation
         // to indicate that both fields are required? Then we can easily just
         // check the whole request that way.
-        @QueryParam("start") start: Instant?,
-        @QueryParam("end") end: Instant?
+        @QueryParam("start") start: ZonedDateTime?,
+        @QueryParam("end") end: ZonedDateTime?
     ): Response =
-        // TODO Handle each missing param separately for better error messaging.
+    // TODO Handle each missing param separately for better error messaging.
         if (start != null && end != null) {
-            Response.ok(RateResponse(1500)).build()
+            logger.info { "getPrice" }
+            Response.ok(
+                RateResponse(
+                    rateService.priceFor(
+                        start.toLocalDateTime(),
+                        end.toLocalDateTime()
+                    )
+                )
+            ).build()
         } else {
             // TODO Clean up error handling
             // This doesn't scale to validating requests across many different
@@ -39,6 +58,7 @@ class RateResource {
                 .build()
         }
 
-    @GET @Path("boom")
+    @GET
+    @Path("boom")
     fun boom(): Response = throw RuntimeException("kah-BEWM!")
 }

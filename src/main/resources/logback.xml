@@ -5,7 +5,9 @@
         </encoder>
     </appender>
 
+    <logger name="pricing" level="debug"/>
+
     <root level="info">
-        <appender-ref ref="stdout" />
+        <appender-ref ref="stdout"/>
     </root>
 </configuration>

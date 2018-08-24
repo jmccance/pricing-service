@@ -1,7 +1,7 @@
 package pricing.config
 
 import java.lang.reflect.Type
-import java.time.Instant
+import java.time.ZonedDateTime
 import javax.ws.rs.ext.ParamConverter
 import javax.ws.rs.ext.ParamConverterProvider
 import javax.ws.rs.ext.Provider
@@ -16,18 +16,18 @@ class JavaTimeConverter : ParamConverterProvider {
         genericType: Type?,
         annotations: Array<out Annotation>?
     ): ParamConverter<T>? = when {
-        Instant::class.java.isAssignableFrom(rawType) ->
-            instantParamConverter as ParamConverter<T>
+        ZonedDateTime::class.java.isAssignableFrom(rawType) ->
+            zonedDateTimeConverter as ParamConverter<T>
 
         else -> null
     }
 
-    private val instantParamConverter = object : ParamConverter<Instant> {
-        override fun toString(value: Instant): String = value.toString()
+    private val zonedDateTimeConverter = object : ParamConverter<ZonedDateTime> {
+        override fun toString(value: ZonedDateTime): String = value.toString()
 
-        override fun fromString(value: String): Instant? =
+        override fun fromString(value: String): ZonedDateTime? =
             if (value.isBlank()) null
-            else Instant.parse(value)
+            else ZonedDateTime.parse(value)
     }
 
     // Add additional java.time.* types as necessary.

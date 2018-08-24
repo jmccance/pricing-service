@@ -29,8 +29,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
     implementation("io.github.microutils:kotlin-logging:1.5.9")
     implementation("org.glassfish.jersey.containers:jersey-container-netty-http")
+    // TODO Swap HK2 out for something else? Dagger? Guice?
     implementation("org.glassfish.jersey.inject:jersey-hk2")
-
 }
 
 application {
