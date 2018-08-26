@@ -1,17 +1,22 @@
 package pricing
 
+import com.typesafe.config.ConfigFactory
 import mu.KotlinLogging
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import pricing.config.Application
+import pricing.config.ApplicationConfig
 import java.net.URI
 
 fun main(args: Array<String>) {
     // TODO Make port and bind host configurable
 
-    val baseUri = URI.create("http://localhost:8080/")
     val logger = KotlinLogging.logger("main")
 
-    val application = Application()
+    val config = ApplicationConfig.from(ConfigFactory.load())
+
+    val baseUri = URI("http", null, config.host, config.port, "/", null, null)
+
+    val application = Application(config)
 
     val server = GrizzlyHttpServerFactory.createHttpServer(
         baseUri,

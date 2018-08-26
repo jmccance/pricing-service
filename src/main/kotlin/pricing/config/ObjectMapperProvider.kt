@@ -12,6 +12,7 @@ import javax.ws.rs.ext.Provider
 @Provider
 @Priority(Priorities.ENTITY_CODER)
 class ObjectMapperProvider : JacksonJaxbJsonProvider(createObjectMapper(), null) {
+
     companion object {
         private fun createObjectMapper(): ObjectMapper =
             ObjectMapper()
@@ -22,4 +23,5 @@ class ObjectMapperProvider : JacksonJaxbJsonProvider(createObjectMapper(), null)
                 // Use ISO dates instead of epoch timestamps
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
+
 }

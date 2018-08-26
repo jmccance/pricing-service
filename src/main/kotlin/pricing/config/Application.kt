@@ -1,55 +1,37 @@
 package pricing.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider
 import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider
-import org.glassfish.hk2.api.TypeLiteral
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.glassfish.hk2.utilities.binding.AbstractBinder
-import org.glassfish.hk2.utilities.binding.ScopedBindingBuilder
-import org.glassfish.hk2.utilities.binding.ServiceBindingBuilder
 import org.glassfish.jersey.server.ResourceConfig
-import pricing.domain.Rate
 import pricing.service.RateService
 import pricing.service.RateServiceImpl
-import java.time.DayOfWeek.*
-import java.time.LocalTime
 
-class Application : ResourceConfig() {
+class Application(config: ApplicationConfig) : ResourceConfig() {
     init {
         packages("pricing")
-        register(ApplicationBinder())
+        register(ApplicationBinder(config))
         register(JacksonJsonProvider::class.java)
         register(JacksonXMLProvider::class.java)
     }
 }
 
-class ApplicationBinder : AbstractBinder() {
-
-    // TODO Load from configuration
-    private val rates = setOf(
-        Rate(
-            setOf(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY),
-            start = LocalTime.parse("06:00"),
-            end = LocalTime.parse("18:00"),
-            price = 1500
-        ),
-        Rate(
-            setOf(SATURDAY, SUNDAY),
-            start = LocalTime.parse("06:00"),
-            end = LocalTime.parse("20:00"),
-            price = 2000
-        )
-    )
-
+class ApplicationBinder(private val config: ApplicationConfig) : AbstractBinder() {
+    
     override fun configure() {
-        bind<RateServiceImpl>().to(RateService::class.java)
-        bind(rates).to<Set<Rate>>()
+        // FIXME This is redundant to the mapper defined in ObjectMapperProvider.
+        // However, it is not clear how to explain to HK2 that the value defined
+        // in the provider should be injected into the RateConfigReader here.
+        //
+        // It seems as if Jersey is doing its own thing with respect to
+        // injection, so trying to do your own, separate injection that shares
+        // functionality is a PITA.
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        val rates = RateConfigReader(mapper).getRates(config.rateConfig)
+
+        bind(RateServiceImpl(rates)).to(RateService::class.java)
     }
-
-    private inline
-    fun <reified T> AbstractBinder.bind(): ServiceBindingBuilder<T> =
-        bind(T::class.java)
-
-    private fun <T> ScopedBindingBuilder<T>.to(): ScopedBindingBuilder<T> =
-        this.to(object : TypeLiteral<T>() {})
 
 }

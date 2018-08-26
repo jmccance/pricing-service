@@ -19,23 +19,25 @@ dependencyManagement {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("ch.qos.logback:logback-core:1.2.3")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.9.6")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.6")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.+")
-    implementation("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.+")
-    implementation("com.fasterxml.jackson.jaxrs:jackson-jaxrs-xml-provider:2.9.+")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
-    implementation("io.github.microutils:kotlin-logging:1.5.9")
-    implementation("net.logstash.logback:logstash-logback-encoder:5.2")
-    implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http")
-    implementation("org.glassfish.jersey.inject:jersey-hk2")
 
-    testImplementation("org.jetbrains.spek:spek-api:1.1.5")
+    implementation("ch.qos.logback", "logback-classic", "1.2.3")
+    implementation("ch.qos.logback", "logback-core", "1.2.3")
+    implementation("com.fasterxml.jackson.core", "jackson-core", "2.9.6")
+    implementation("com.fasterxml.jackson.core", "jackson-databind", "2.9.6")
+    implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", "2.9.+")
+    implementation("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-json-provider", "2.9.+")
+    implementation("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-xml-provider", "2.9.+")
+    implementation("com.typesafe", "config", "1.3.2")
+    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.9.+")
+    implementation("io.github.microutils", "kotlin-logging", "1.5.9")
+    implementation("net.logstash.logback", "logstash-logback-encoder", "5.2")
+    implementation("org.glassfish.jersey.containers", "jersey-container-grizzly2-http")
+    implementation("org.glassfish.jersey.inject", "jersey-hk2")
 
-    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testImplementation("org.jetbrains.spek", "spek-api", "1.1.5")
+
+    testRuntime("org.jetbrains.spek", "spek-junit-platform-engine", "1.1.5")
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
 }
 
 application {
