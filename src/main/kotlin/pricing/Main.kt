@@ -1,7 +1,7 @@
 package pricing
 
 import mu.KotlinLogging
-import org.glassfish.jersey.netty.httpserver.NettyHttpContainerProvider
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import pricing.config.Application
 import java.net.URI
 
@@ -13,14 +13,17 @@ fun main(args: Array<String>) {
 
     val application = Application()
 
-    val server = NettyHttpContainerProvider.createHttp2Server(
+    val server = GrizzlyHttpServerFactory.createHttpServer(
         baseUri,
-        application,
-        null
+        application
     )
 
-    // Ensure we close the resources allocated by Netty on our way out.
-    Runtime.getRuntime().addShutdownHook(Thread(Runnable { server.close() }))
+    // Ensure we close the resources allocated by the server on our way out.
+    Runtime.getRuntime().addShutdownHook(
+        Thread(Runnable {
+            server.shutdownNow()
+        })
+    )
 
     logger.info { "Application listening on $baseUri" }
 

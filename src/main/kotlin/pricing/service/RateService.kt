@@ -5,9 +5,9 @@ import org.jvnet.hk2.annotations.Service
 import pricing.domain.Price
 import pricing.domain.Rate
 import java.time.DayOfWeek
-import java.time.DayOfWeek.*
 import java.time.LocalDateTime
 import java.time.LocalTime
+import javax.inject.Inject
 
 @Contract
 interface RateService {
@@ -15,23 +15,9 @@ interface RateService {
 }
 
 @Service
-class RateServiceImpl : RateService {
-
-    // TODO Load from configuration
-    private val rates = setOf(
-        Rate(
-            setOf(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY),
-            start = LocalTime.parse("06:00"),
-            end = LocalTime.parse("18:00"),
-            price = 1500
-        ),
-        Rate(
-            setOf(SATURDAY, SUNDAY),
-            start = LocalTime.parse("06:00"),
-            end = LocalTime.parse("20:00"),
-            price = 2000
-        )
-    )
+class RateServiceImpl @Inject() constructor(
+    private val rates: Set<Rate>
+) : RateService {
 
     override fun priceFor(
         start: LocalDateTime,
