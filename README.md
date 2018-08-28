@@ -8,6 +8,7 @@ TODO
 - Attach Swagger endpoint
 - Write automated tests for the Paw requests you're manually testing with now.
 - Add request/response logging
+- Document Request-Id header in OpenAPI spec
 
 ### Documentation
 

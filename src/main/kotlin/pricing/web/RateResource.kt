@@ -2,6 +2,7 @@ package pricing.web
 
 import mu.KLogging
 import pricing.service.RateService
+import pricing.web.filter.RequestId
 import java.time.Instant
 import java.time.ZonedDateTime
 import javax.annotation.ManagedBean
@@ -10,6 +11,7 @@ import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.Response
 
 @Path("rates")
@@ -25,7 +27,8 @@ class RateResource @Inject constructor(private val rateService: RateService) {
         // to indicate that both fields are required? Then we can easily just
         // check the whole request that way.
         @QueryParam("start") start: ZonedDateTime?,
-        @QueryParam("end") end: ZonedDateTime?
+        @QueryParam("end") end: ZonedDateTime?,
+        @Context requestId: RequestId?
     ): Response =
     // TODO Handle each missing param separately for better error messaging.
         if (start != null && end != null) {
@@ -46,10 +49,13 @@ class RateResource @Inject constructor(private val rateService: RateService) {
             //
             //     MissingRequiredParameterException(param1, param2, ...)
             //
+
+            // TODO Can we declare a local exception mapper for local functionality?
             Response
                 .status(Response.Status.BAD_REQUEST)
                 .entity(
                     ErrorResponse(
+                        requestId?.value,
                         timestamp = Instant.now(),
                         statusCode = Response.Status.BAD_REQUEST.statusCode,
                         message = "Missing required parameter [start, end]"

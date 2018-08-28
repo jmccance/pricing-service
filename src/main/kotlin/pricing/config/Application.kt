@@ -5,12 +5,18 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import org.glassfish.hk2.api.Factory
 import org.glassfish.hk2.api.TypeLiteral
 import org.glassfish.hk2.utilities.binding.AbstractBinder
+import org.glassfish.jersey.process.internal.RequestScoped
 import org.glassfish.jersey.server.ResourceConfig
 import pricing.domain.Rate
 import pricing.service.RateService
 import pricing.service.RateServiceImpl
+import pricing.web.filter.RequestId
+import pricing.web.filter.requestId
+import javax.ws.rs.container.ContainerRequestContext
+import javax.ws.rs.core.Context
 
 class Application(config: ApplicationConfig) : ResourceConfig() {
     init {
@@ -32,6 +38,10 @@ class Application(config: ApplicationConfig) : ResourceConfig() {
                     .to(object : TypeLiteral<java.util.Set<Rate>>() {})
 
                 bind(RateServiceImpl::class.java).to(RateService::class.java)
+
+                bindFactory(RequestIdFactory::class.java)
+                    .to(RequestId::class.java)
+                    .`in`(RequestScoped::class.java)
             }
         })
     }
@@ -47,3 +57,10 @@ class Application(config: ApplicationConfig) : ResourceConfig() {
                 as M
 }
 
+class RequestIdFactory(
+    @Context val requestContext: ContainerRequestContext
+) : Factory<RequestId?> {
+    override fun provide(): RequestId? = requestContext.requestId
+
+    override fun dispose(instance: RequestId?) { }
+}
