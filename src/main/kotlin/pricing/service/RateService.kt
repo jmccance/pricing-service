@@ -1,7 +1,5 @@
 package pricing.service
 
-import org.jvnet.hk2.annotations.Contract
-import org.jvnet.hk2.annotations.Service
 import pricing.domain.Price
 import pricing.domain.Rate
 import java.time.DayOfWeek
@@ -9,12 +7,10 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
 
-@Contract
 interface RateService {
     fun priceFor(start: LocalDateTime, end: LocalDateTime): Price?
 }
 
-@Service
 class RateServiceImpl @Inject() constructor(
     private val rates: Set<Rate>
 ) : RateService {

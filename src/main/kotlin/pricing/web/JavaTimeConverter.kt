@@ -1,4 +1,4 @@
-package pricing.config
+package pricing.web
 
 import java.lang.reflect.Type
 import java.time.ZonedDateTime
