@@ -56,6 +56,11 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 tasks {
     val test by getting(Test::class) {
         useJUnitPlatform {

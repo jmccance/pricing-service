@@ -30,11 +30,12 @@ class RequestHandledLoggingFilter(
         requestContext: ContainerRequestContext,
         responseContext: ContainerResponseContext
     ) {
-        val elapsedTime =
+        val elapsedTime = requestContext.startTimeNs?.let {
             Duration.of(
                 System.nanoTime() - requestContext.startTimeNs!!,
                 ChronoUnit.NANOS
             )
+        }
 
         // We know this cast is safe because we're declaring the map to be from
         // String to String? and then we're filtering out all the nulls.
@@ -45,14 +46,14 @@ class RequestHandledLoggingFilter(
         @Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
         val extraContext = mapOf<String, String?>(
             "exception" to getQualifiedName(uriInfo.mappedThrowable),
-            "exception.message" to uriInfo.mappedThrowable?.message
+            "exception.message" to uriInfo.mappedThrowable?.message,
+            "durationMs" to elapsedTime?.toMillis()?.toString()
         ).filterValues { it != null } as Map<String, String>
 
         withLoggingContext(
             mapOf(
-                "endpoint" to "${requestContext.method} ${uriInfo.matchedTemplates[0]}",
-                "statusCode" to responseContext.status.toString(),
-                "durationMs" to elapsedTime.toMillis().toString()
+                "endpoint" to "${requestContext.method} ${getPath(uriInfo)}",
+                "statusCode" to responseContext.status.toString()
             ) + extraContext
         ) {
             if (uriInfo.mappedThrowable != null) {
@@ -70,5 +71,8 @@ class RequestHandledLoggingFilter(
      */
     private fun getQualifiedName(t: Throwable?): String? =
         if (t == null) null else t::class.qualifiedName
+
+    private fun getPath(uriInfo: ExtendedUriInfo): String =
+            uriInfo.matchedTemplates.firstOrNull()?.toString() ?: "/${uriInfo.path}"
 
 }
