@@ -4,6 +4,7 @@ import mu.KLogging
 import org.glassfish.jersey.server.ExtendedUriInfo
 import org.glassfish.jersey.server.ParamException
 import org.glassfish.jersey.uri.UriTemplate
+import pricing.services.InvalidDateRangeException
 import pricing.web.filters.RequestId
 import java.time.Instant
 import java.time.format.DateTimeParseException
@@ -31,7 +32,7 @@ class ApplicationExceptionMapper(
                 unmappedExceptionResponse(exception)
             }
 
-        is MissingParameterException ->
+        is MissingParameterException, is InvalidDateRangeException ->
             errorResponse(Status.BAD_REQUEST, exception.message)
 
         is WebApplicationException -> exception.response

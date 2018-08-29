@@ -19,6 +19,8 @@ class RateServiceImpl @Inject() constructor(
         start: LocalDateTime,
         end: LocalDateTime
     ): Price? {
+        validateDateRange(start, end)
+
         val dayOfWeek = getCommonDayOfWeek(start, end)
 
         return if (dayOfWeek == null) {
@@ -32,6 +34,12 @@ class RateServiceImpl @Inject() constructor(
             )
 
             rate?.price
+        }
+    }
+
+    private fun validateDateRange(start: LocalDateTime, end: LocalDateTime) {
+        if (end.isBefore(start)) {
+            throw InvalidDateRangeException("'start' must precede 'end'")
         }
     }
 
@@ -58,3 +66,5 @@ class RateServiceImpl @Inject() constructor(
         rate.start.isBefore(reqStart) && rate.end.isAfter(reqEnd)
     }
 }
+
+data class InvalidDateRangeException(override val message: String) : RuntimeException()

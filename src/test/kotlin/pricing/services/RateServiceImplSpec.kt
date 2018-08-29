@@ -4,6 +4,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions.assertThrows
 import pricing.domain.Rate
 import java.time.DayOfWeek.*
 import java.time.LocalDateTime
@@ -16,8 +17,8 @@ object RateServiceImplSpec : Spek({
         on("calculating price for a time period") {
             it("returns null if the period spans more than one day") {
                 val result = service.priceFor(
-                    LocalDateTime.parse("2018-01-02T06:00:00"),
-                    LocalDateTime.parse("2018-01-01T07:00:00")
+                    LocalDateTime.parse("2018-01-01T06:00:00"),
+                    LocalDateTime.parse("2018-01-02T07:00:00")
                 )
 
                 assert(result == null) { "$result != null" }
@@ -39,6 +40,15 @@ object RateServiceImplSpec : Spek({
                 )
 
                 assert(result == null) { "$result != null" }
+            }
+
+            it("throws an InvalidDateRangeException if the date range is nonsensical") {
+                assertThrows(InvalidDateRangeException::class.java) {
+                    service.priceFor(
+                        LocalDateTime.parse("2018-01-01T12:00:00"),
+                        LocalDateTime.parse("2018-01-01T07:00:00")
+                    )
+                }
             }
         }
 
