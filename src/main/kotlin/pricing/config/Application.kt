@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource
 import org.glassfish.hk2.api.Factory
 import org.glassfish.hk2.api.TypeLiteral
 import org.glassfish.hk2.utilities.binding.AbstractBinder
@@ -20,7 +22,11 @@ import javax.ws.rs.core.Context
 
 class Application(config: ApplicationConfig) : ResourceConfig() {
     init {
-        packages("pricing.config", "pricing.web")
+        packages(
+            "pricing.config",
+            "pricing.web",
+            "io.swagger.v3.jaxrs2.integration"
+        )
 
         register(object : AbstractBinder() {
             override fun configure() {

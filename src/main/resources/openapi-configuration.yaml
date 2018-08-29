@@ -1,0 +1,126 @@
+# Do NOT attempt to generate documentation by reflecting on the resources.
+#
+# We want to use the swagger-jaxrs integration to help with serving content-
+# negotiated specs, but we want to control what the actual definition is.
+readAllResources: false
+
+openAPI:
+  openapi: "3.0.1"
+
+  info:
+    title: pricing-service
+    version: "0.1"
+    description: |
+      A service for retrieving the hourly price that would be charged for
+      parking during a specified period.
+
+  servers:
+  - url: http://localhost:8080
+
+  paths:
+    /rates:
+      tags: [Rates]
+      get:
+        operationId: getRate
+        summary: Get parking rate
+        description: |
+          Get the rate that will be charged per hour for parking during the
+          specified window. If parking is unavailable for the specified
+          period, the returned rate will be `null`.
+
+          - The start date must precede the end date.
+          - Requests that span multiple days are not supported.
+
+        parameters:
+        - name: start
+          in: query
+          required: true
+          description: |
+            The start of the time period to check
+          schema:
+            $ref: '#/components/schemas/IsoDateTime'
+          example: '2018-08-16T02:19:04.878Z'
+
+        - name: end
+          in: query
+          required: true
+          description: |
+            The end of the time period to check
+          schema:
+            $ref: '#/components/schemas/IsoDateTime'
+          example: '2018-08-16T02:19:04.878Z'
+
+        responses:
+          '200':
+            description: |
+              Response describing the hourly rate for the given window.
+            headers:
+              Request-Id:
+                $ref: '#/components/headers/Request-Id'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/RateResponse'
+
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/RateResponse'
+
+          '400':
+            description: |
+              Returned if the input is invalid
+            headers:
+              Request-Id:
+                $ref: '#/components/headers/Request-Id'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+
+  components:
+    headers:
+      Request-Id:
+        description: The unique id assigned to this request
+        schema:
+          type: string
+    schemas:
+      IsoDateTime:
+        description: |
+          A UTC date-time in ISO-8601 format.
+        type: string
+        format: date-time
+
+      RateResponse:
+        properties:
+          rate:
+            description: |
+              The hourly rate that would be charged for the given time window.
+
+              If parking is unavailable for the specified time window, `rate` will
+              be null.
+            type: integer
+            nullable: true
+
+      ErrorResponse:
+        properties:
+          requestId:
+            type: string
+            description: |
+              The unique id assigned to this request
+          statusCode:
+            type: integer
+            description: |
+              The status code returned with this error (404, 401, etc.)
+          timestamp:
+            type: string
+            format: date-time
+            description: |
+              The server-side timestamp when this request was made
+          message:
+            type: string
+            description: |
+              The error message

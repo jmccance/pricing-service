@@ -63,8 +63,4 @@ class RateResource @Inject constructor(private val rateService: RateService) {
                 )
                 .build()
         }
-
-    @GET
-    @Path("boom")
-    fun boom(): Response = throw RuntimeException("kah-BEWM!")
 }
