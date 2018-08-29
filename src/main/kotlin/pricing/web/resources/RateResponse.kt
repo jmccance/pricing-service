@@ -1,4 +1,4 @@
-package pricing.web
+package pricing.web.resources
 
 import pricing.domain.Price
 

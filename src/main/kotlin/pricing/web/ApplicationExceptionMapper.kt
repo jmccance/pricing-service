@@ -4,7 +4,7 @@ import mu.KLogging
 import org.glassfish.jersey.server.ExtendedUriInfo
 import org.glassfish.jersey.server.ParamException
 import org.glassfish.jersey.uri.UriTemplate
-import pricing.web.filter.RequestId
+import pricing.web.filters.RequestId
 import java.time.Instant
 import java.time.format.DateTimeParseException
 import javax.ws.rs.WebApplicationException

@@ -35,6 +35,8 @@ To test with a different rate configuration, set the `RATE_CONFIG` environment v
 RATE_CONFIG=./conf/alt-rate-config.json gradle run
 ```
 
+To run the tests, run `gradle check`.
+
 Configuration
 -------------
 
@@ -69,7 +71,6 @@ TODO
 ----
 
 - Write automated tests for the Paw requests you're manually testing with now.
-- Add request/response logging
 
 ### Documentation
 

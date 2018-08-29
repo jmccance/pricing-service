@@ -5,18 +5,16 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource
 import org.glassfish.hk2.api.Factory
 import org.glassfish.hk2.api.TypeLiteral
 import org.glassfish.hk2.utilities.binding.AbstractBinder
 import org.glassfish.jersey.process.internal.RequestScoped
 import org.glassfish.jersey.server.ResourceConfig
 import pricing.domain.Rate
-import pricing.service.RateService
-import pricing.service.RateServiceImpl
-import pricing.web.filter.RequestId
-import pricing.web.filter.requestId
+import pricing.services.RateService
+import pricing.services.RateServiceImpl
+import pricing.web.filters.RequestId
+import pricing.web.filters.requestId
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.core.Context
 

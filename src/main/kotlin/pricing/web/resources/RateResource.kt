@@ -1,7 +1,8 @@
-package pricing.web
+package pricing.web.resources
 
 import mu.KLogging
-import pricing.service.RateService
+import pricing.services.RateService
+import pricing.web.MissingParameterException
 import java.time.ZonedDateTime
 import javax.annotation.ManagedBean
 import javax.inject.Inject

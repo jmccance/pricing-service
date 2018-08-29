@@ -1,4 +1,4 @@
-package pricing.web.filter
+package pricing.web.filters
 
 import mu.KLogging
 import mu.withLoggingContext

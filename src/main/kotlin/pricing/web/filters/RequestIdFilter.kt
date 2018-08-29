@@ -1,4 +1,4 @@
-package pricing.web.filter
+package pricing.web.filters
 
 import javax.ws.rs.container.*
 import javax.ws.rs.ext.Provider

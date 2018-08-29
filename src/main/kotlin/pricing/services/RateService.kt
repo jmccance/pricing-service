@@ -1,4 +1,4 @@
-package pricing.service
+package pricing.services
 
 import pricing.domain.Price
 import pricing.domain.Rate
