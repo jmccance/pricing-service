@@ -12,18 +12,27 @@ import javax.ws.rs.container.ContainerResponseFilter
 import javax.ws.rs.core.Context
 import javax.ws.rs.ext.Provider
 
+private const val START_TIME_NS = "responseLoggingFilter.startTimeNs"
+
+/**
+ * Logs the results of each handled request with associated metadata, including request id, status
+ * code, endpoint (HTTP method + matched path), duration, and exception information (if applicable).
+ */
 @Provider
 class RequestHandledLoggingFilter(
     @Context private val uriInfo: ExtendedUriInfo
 ) : ContainerRequestFilter, ContainerResponseFilter {
     companion object : KLogging()
 
+    // TODO Inject this as a constructor parameter for testing purposes
+    private val nanoTimeNow: () -> Long = System::nanoTime
+
     private var ContainerRequestContext.startTimeNs: Long?
-        get() = this.getProperty("responseLoggingFilter.startTimeNs") as Long?
-        set(value) = this.setProperty("responseLoggingFilter.startTimeNs", value)
+        get() = this.getProperty(START_TIME_NS) as Long?
+        set(value) = this.setProperty(START_TIME_NS, value)
 
     override fun filter(requestContext: ContainerRequestContext) {
-        requestContext.startTimeNs = System.nanoTime()
+        requestContext.startTimeNs = nanoTimeNow()
     }
 
     override fun filter(
@@ -32,7 +41,7 @@ class RequestHandledLoggingFilter(
     ) {
         val elapsedTime = requestContext.startTimeNs?.let {
             Duration.of(
-                System.nanoTime() - requestContext.startTimeNs!!,
+                nanoTimeNow() - requestContext.startTimeNs!!,
                 ChronoUnit.NANOS
             )
         }
@@ -45,9 +54,9 @@ class RequestHandledLoggingFilter(
         // Map<String, String> and not Map<String, Any>.
         @Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
         val extraContext = mapOf<String, String?>(
+            "durationMs" to elapsedTime?.toMillis()?.toString(),
             "exception" to getQualifiedName(uriInfo.mappedThrowable),
-            "exception.message" to uriInfo.mappedThrowable?.message,
-            "durationMs" to elapsedTime?.toMillis()?.toString()
+            "exception.message" to uriInfo.mappedThrowable?.message
         ).filterValues { it != null } as Map<String, String>
 
         withLoggingContext(

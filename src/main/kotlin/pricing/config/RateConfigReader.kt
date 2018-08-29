@@ -45,7 +45,9 @@ class RateConfigReader @Inject constructor(private val mapper: ObjectMapper) {
                 "fri" -> FRIDAY
                 "sat" -> SATURDAY
                 "sun" -> SUNDAY
-                else -> throw RuntimeException("") // FIXME
+                else -> throw IllegalArgumentException(
+                    "'days' must be one of [mon, tues, wed, thurs, fri, sat, sun]"
+                )
             }
         }.toSet()
 
@@ -56,7 +58,11 @@ class RateConfigReader @Inject constructor(private val mapper: ObjectMapper) {
             LocalTime.parse(it, timeFormat)
         }
 
-        return Pair(times[0], times[1])
+        if (times.size == 2) {
+            return Pair(times[0], times[1])
+        } else {
+            throw IllegalArgumentException("'times' must be in the format 'HHMM-HHMM'")
+        }
     }
 
 }

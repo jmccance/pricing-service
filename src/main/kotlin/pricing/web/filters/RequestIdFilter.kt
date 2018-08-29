@@ -1,13 +1,24 @@
 package pricing.web.filters
 
-import javax.ws.rs.container.*
+import mu.KLogging
+import org.slf4j.MDC
+import javax.ws.rs.container.ContainerRequestContext
+import javax.ws.rs.container.ContainerRequestFilter
+import javax.ws.rs.container.ContainerResponseContext
+import javax.ws.rs.container.ContainerResponseFilter
+import javax.ws.rs.container.PreMatching
 import javax.ws.rs.ext.Provider
 
 @Provider
 @PreMatching
 class RequestIdFilter : ContainerRequestFilter, ContainerResponseFilter {
+    companion object : KLogging()
+
     override fun filter(requestContext: ContainerRequestContext) {
         requestContext.requestId = RequestId.randomId()
+
+        // Note that this only works if we're using a thread-per-request model.
+        MDC.put("requestId", requestContext.requestId?.value)
     }
 
     override fun filter(

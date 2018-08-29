@@ -38,7 +38,7 @@ object RateServiceImplSpec : Spek({
                     LocalDateTime.parse("2018-01-01T01:00:00")
                 )
 
-                assert(result == null) { "$ result != null" }
+                assert(result == null) { "$result != null" }
             }
         }
 

@@ -37,6 +37,7 @@ dependencies {
     implementation("org.glassfish.jersey.inject", "jersey-hk2")
 
     testImplementation("org.jetbrains.spek", "spek-api", "1.1.5")
+    testImplementation("io.mockk", "mockk", "1.8.6")
 
     testRuntime("org.jetbrains.spek", "spek-junit-platform-engine", "1.1.5")
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")

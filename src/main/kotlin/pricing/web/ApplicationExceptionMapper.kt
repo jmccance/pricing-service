@@ -20,7 +20,7 @@ class ApplicationExceptionMapper(
     @Context private val requestId: RequestId,
     @Context private val request: Request,
     @Context private val uriInfo: ExtendedUriInfo
-): ExceptionMapper<Throwable> {
+) : ExceptionMapper<Throwable> {
     companion object : KLogging()
 
     override fun toResponse(exception: Throwable?): Response = when (exception) {
@@ -34,9 +34,7 @@ class ApplicationExceptionMapper(
         is MissingParameterException ->
             errorResponse(Status.BAD_REQUEST, exception.message)
 
-        is WebApplicationException -> {
-            exception.response
-        }
+        is WebApplicationException -> exception.response
 
         else -> unmappedExceptionResponse(exception)
     }
