@@ -1,12 +1,15 @@
 package pricing.web
 
 import mu.KLogging
+import org.glassfish.jersey.server.ExtendedUriInfo
 import org.glassfish.jersey.server.ParamException
+import org.glassfish.jersey.uri.UriTemplate
 import pricing.web.filter.RequestId
 import java.time.Instant
 import java.time.format.DateTimeParseException
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.Context
+import javax.ws.rs.core.Request
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.Response.Status
 import javax.ws.rs.ext.ExceptionMapper
@@ -14,7 +17,9 @@ import javax.ws.rs.ext.Provider
 
 @Provider
 class ApplicationExceptionMapper(
-    @Context private val requestId: RequestId
+    @Context private val requestId: RequestId,
+    @Context private val request: Request,
+    @Context private val uriInfo: ExtendedUriInfo
 ): ExceptionMapper<Throwable> {
     companion object : KLogging()
 
@@ -25,6 +30,9 @@ class ApplicationExceptionMapper(
             } else {
                 unmappedExceptionResponse(exception)
             }
+
+        is MissingParameterException ->
+            errorResponse(Status.BAD_REQUEST, exception.message)
 
         is WebApplicationException -> {
             exception.response
@@ -49,10 +57,16 @@ class ApplicationExceptionMapper(
                 ErrorResponse(
                     requestId = requestId.value,
                     timestamp = Instant.now(),
+                    endpoint = endpoint(request, uriInfo.matchedTemplates),
                     statusCode = status.statusCode,
                     message = message
                 )
             )
             .build()
+
+    private fun endpoint(
+        request: Request,
+        matchedTemplates: List<UriTemplate>
+    ): String = "${request.method} ${matchedTemplates[0]}"
 }
 

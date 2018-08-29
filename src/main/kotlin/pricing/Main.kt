@@ -24,7 +24,6 @@ fun main(args: Array<String>) {
 
     server.serverConfiguration.addHttpHandler(
         CLStaticHttpHandler(application.classLoader, "swagger-ui/"),
-        "/swagger-ui",
         "/swagger-ui/*"
     )
 
